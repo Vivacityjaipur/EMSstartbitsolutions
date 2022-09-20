@@ -22,30 +22,34 @@ namespace BOL
 
         public string currentaddressline3 { get; set; }
         public string currentcity { get; set; }
+        public string current_zip { get; set; }
+
         public string currentstate { get; set; }
         public string permanentaddreaaline1 { get; set; }
         public string permanentaddreaaline2 { get; set; }
         public string permanentaddreaaline3 { get; set; }
         public string city { get; set; }
+        public string permanent_zip { get; set; }
         public string state { get; set; }
-        public string phone1 { get; set; }
-        public string phone2 { get; set; }
+        public string phone { get; set; }
 
+        public bool? marital_status { get; set; }
+        public string spouse_name { get; set; }
 
         public string alternatephone { get; set; }
-        public string panno { get; set; }
+        public DateTime? date_of_marride { get; set; }
         public string pfno { get; set; }
         public DateTime? doj { get; set; }
         public DateTime? dob { get; set; }
         [Required]
         public int designation_id { get; set; }
-       
+
         [ForeignKey("designation_id ")]
-        
+
         public virtual designation designations { get; set; }
         [Required]
         public int department_id { get; set; }
-        
+
         [ForeignKey("department_id  ")]
         public virtual department departments { get; set; }
         [Required]
@@ -66,14 +70,20 @@ namespace BOL
         public string emergencycontactperson { get; set; }
         public string bloodgroup { get; set; }
         public string personrelation { get; set; }
-        public double? basicpay { get; set; }
-        public double? currentsalary { get; set; }
-        
-        public bool? billingstatus { get; set; }
+
+
+
         public string fathername { get; set; }
         public string mothername { get; set; }
-        public DateTime?  dor { get; set; }
+        public string pan { get; set; }
+        public string aadhar { get; set; }
+        public string uanno { get; set; }
+        public string esino { get; set; }
+        public string gratuity { get; set; }
+        public string cancelcheque { get; set; }
+        public string pp_photo { get; set; }
+        public string workmode { get; set; }
+        public string allergy_diseases { get; set; }
         public DateTime created_date { get; set; }
-
     }
-}
+    }
