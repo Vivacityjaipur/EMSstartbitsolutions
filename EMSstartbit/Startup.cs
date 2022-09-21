@@ -51,6 +51,11 @@ namespace EMSstartbit
             services.AddScoped<IdepartmentData, departmentData>();
             services.AddScoped<IshiftData, shiftData>();
             services.AddScoped<ItestData, testData>();
+            services.AddScoped<IemailControlData, emailControlData>();
+
+            //Masters
+            services.AddScoped<IbloodgroupData, bloodgroupData>();
+            services.AddScoped<IworkmodeData, workmodeData>();
 
             services.AddControllers();
             services.AddSwaggerGen();

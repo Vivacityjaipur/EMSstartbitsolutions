@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BAL;
 using BOL;
+using EMSstartbit.Models;
+using BOL.Responses;
 
 namespace EMSstartbit.TokenAuthentication
 {
@@ -16,8 +18,12 @@ namespace EMSstartbit.TokenAuthentication
         private JwtSecurityTokenHandler tokenHandler;
         private byte[] secretKey;
         private readonly IloginData _ldata;
-        public TokenManager(IloginData ldata)
+        private readonly IemployeeData employeedata;
+        private readonly IuserPermissionData userpermessiondata;
+        public TokenManager(IloginData ldata, IemployeeData employeedata, IuserPermissionData userpermessiondata)
         {
+            this.employeedata = employeedata;
+            this.userpermessiondata = userpermessiondata;
             _ldata = ldata;
             tokenHandler = new JwtSecurityTokenHandler();
             secretKey = Encoding.ASCII.GetBytes("abcdefghijklmnopqrstuvwxyzabcdef");
@@ -25,28 +31,39 @@ namespace EMSstartbit.TokenAuthentication
 
         public object Ecoding { get; }
 
-        public async Task<string> Authenticate(int eid, string password)
+        public async Task<AuthResponse> Authenticate(AuthModel au)
         {
-            var logData = await _ldata.getByEid(eid);
-            if (logData == null)
+            var isNumeric = int.TryParse(au.name, out _);
+            var emp = (isNumeric) ? await employeedata.GetById(Convert.ToInt32(au.name)) : await employeedata.GetByEmailId(au.name);
+           
+            if (emp == null )
             {
                 //error message employee not found 
-                return "User not Found";
+                return new AuthResponse { status =new statusResponse {Code=404,Message= "employee is not available or internal error" } , permissionlist = null };
             }
-            if (logData.is_active == false)
+            var loginvalue = await _ldata.getByEid(emp.employee_id);
+            if (loginvalue == null)
             {
-                return "User is not Active";
+                //error message employee not found 
+                return new AuthResponse { status = new statusResponse { Code=404,Message= "user is not available or internal error" }, permissionlist = null };
+            }
+            if (loginvalue.is_active == false)
+            {
+                return new AuthResponse { status=new statusResponse { Code= 403 ,Message= "User is not Active" } , permissionlist = null };
             }
 
-            if (!string.IsNullOrWhiteSpace(password) && password == logData.password)
+            if (!string.IsNullOrWhiteSpace(au.password) && au.password == loginvalue.password)
             {
+                var permessionlist = await userpermessiondata.GetByEid(emp.employee_id);
                 //Authenticate success
-                return "Authenticated";
+                return new AuthResponse { status =new statusResponse {Code=200,Message= "Authenticated" }, permissionlist = permessionlist };
             }
             else
             {
                 //Password doesn't not match
-                return "Password Doesn't Match";
+                return new AuthResponse { status = new statusResponse { Code=400,Message= "Password Doesn't Match" }, permissionlist = null };
+
+
             }
 
         }
@@ -62,7 +79,7 @@ namespace EMSstartbit.TokenAuthentication
             var token = tokenHandler.CreateToken(tokenDescriptor);
             //var JwtString = tokenHandler.WriteToken(token);
             //return  JwtString;
-            return await System.Threading.Tasks.Task.Run(() => tokenHandler.WriteToken(token));
+            return await Task.Run(() => tokenHandler.WriteToken(token));
         }
         public async Task<string> VerifyToken(string token)
         {
@@ -93,7 +110,7 @@ namespace EMSstartbit.TokenAuthentication
                 //var accountId = jwtToken.Claims.First(x => x.Type == "email").Value;
 
                 //return accountId;
-                return await System.Threading.Tasks.Task.Run(() => jwtToken.Claims.First(x => x.Type == "email").Value);
+                return await Task.Run(() => jwtToken.Claims.First(x => x.Type == "email").Value);
             }
             catch (Exception ex)
             {

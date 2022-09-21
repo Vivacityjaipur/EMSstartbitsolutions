@@ -19,10 +19,28 @@ namespace DAL
         private Repository<department> _departments;
         private Repository<shift> _shifts;
         private Repository<test> _tests;
+        private Repository<bloodgroup> _bloodgroups;
+        private Repository<workmode> _workmodes;
 
         public UnitOfWork(EMSDataContext context)
         {
             _context = context;
+        }
+        public IRepository<bloodgroup> bloodgroups
+        {
+            get
+            {
+                return _bloodgroups ??
+                    (_bloodgroups = new Repository<bloodgroup>(_context));
+            }
+        }
+        public IRepository<workmode> workmodes
+        {
+            get
+            {
+                return _workmodes ??
+                    (_workmodes = new Repository<workmode>(_context));
+            }
         }
         public IRepository<employee> employees
         {

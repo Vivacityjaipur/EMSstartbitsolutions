@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using EMSstartbit.Models;
+using System.Threading.Tasks;
 
 namespace EMSstartbit.TokenAuthentication
 {
@@ -6,7 +7,7 @@ namespace EMSstartbit.TokenAuthentication
     {
         object Ecoding { get; }
 
-        Task<string> Authenticate(int username, string password);
+        Task<AuthResponse> Authenticate(AuthModel au);
         Task<string> NewToken(string username);
         Task<string> VerifyToken(string token);
     }

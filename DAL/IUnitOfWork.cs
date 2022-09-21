@@ -18,6 +18,12 @@ namespace DAL
         IRepository<designation> designations { get; }
         IRepository<shift> shifts { get; }
         IRepository<test> tests { get; }
+
+
+
+        //Masters
+        IRepository<bloodgroup> bloodgroups { get; }
+        IRepository<workmode> workmodes { get; }
         // void Commit();
         Task<bool> CompleteAsync();
         void Dispose();

@@ -17,7 +17,7 @@ namespace BAL
         public async Task<IEnumerable<role>> GetAll()
         {
             var result = await _unitofwork.roles.GetData();
-            await Task.Run(() => _unitofwork.Dispose());
+            
             return result;
         }
         public async Task<role> Insert(role u)

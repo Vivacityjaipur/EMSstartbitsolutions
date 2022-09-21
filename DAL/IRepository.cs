@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DAL
 {
     public interface IRepository<T> where T : class
     {
-        //IEnumerable<T> GetData();
-        //T GetDataById(int id);
-        //void AddData(T entity);
-        //void EditData(T entity);
-        //void DeleteData(T entity);
+        Task<T> AddData(T entity);
+        Task<IEnumerable<T>> AddMultipleData(IEnumerable<T> entities);
+        Task<T> DeleteData(int id);
+        Task<IEnumerable<T>> DeleteMultipleData(IEnumerable<int> ids);
+        Task<T> EditData(T value);
+        Task<IEnumerable<T>> EditMultipleData(IEnumerable<T> entities);
+        Task<IEnumerable<T>> GetAllByExpression(Expression<Func<T, bool>> expression);
+        Task<T> GetByExpression(Expression<Func<T, bool>> expression);
         Task<IEnumerable<T>> GetData();
         Task<T> GetDataById(int id);
-        Task<T> AddData(T entity);
-        Task<T> EditData(T entity);
-        Task<T> DeleteData(int id);
-        Task<IEnumerable<T>> AddMultipleData(IEnumerable<T> entities);
-        Task<IEnumerable<T>> EditMultipleData(IEnumerable<T> entities);
-        Task<IEnumerable<T>> DeleteMultipleData(IEnumerable<int> ids);
     }
 }

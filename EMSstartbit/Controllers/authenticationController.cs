@@ -33,32 +33,28 @@ namespace EMSstartbit.Controllers
                     return BadRequest(new ErrorResponse
                     { 
                         Error="Invalid Input",
-                        ErrorCode="L01"
+                        ErrorCode= "400"
                     });
                 }
-                var isNumeric = int.TryParse(au.name, out _);
-                if (!isNumeric)
+                if (au.name == "")
                 {
                     return BadRequest(new ErrorResponse
                     {
                         Error = "Invalid Input",
-                        ErrorCode = "L01"
+                        ErrorCode = "400"
                     });
                 }
-                var eid = Convert.ToInt32(au.name);
-                var result = await tokenManager.Authenticate(eid, au.password);
-                if (result == "Authenticated")
+                var result = await tokenManager.Authenticate(au);
+                if (result.status.Code == 200)
                 {
-                    
-                    var permissionlist = await _userpermissiondata.GetByEid(eid);
-                    return Ok(new { Token = await tokenManager.NewToken(au.name),permissionlist });
+                    return Ok(new { Token = await tokenManager.NewToken(au.name),result.permissionlist });
                 }
                 else
                 {
-                    return Unauthorized(new ErrorResponse
+                    return StatusCode(result.status.Code,new ErrorResponse
                     {
-                        Error = result,
-                        ErrorCode = "L02"
+                        Error = result.status.Message,
+                        ErrorCode = result.status.Code.ToString()
                     });
                 }
             }
@@ -67,7 +63,7 @@ namespace EMSstartbit.Controllers
                 return BadRequest(new ErrorResponse
                 {
                     Error = ex.Message,
-                    ErrorCode = "L03"
+                    ErrorCode = "400"
                 });
             }
            

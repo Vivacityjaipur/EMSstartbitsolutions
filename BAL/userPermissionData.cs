@@ -15,8 +15,9 @@ namespace BAL
         public userPermissionData(IUnitOfWork unitOfWork)
         {
             _unitofwork = unitOfWork;
-
+         
         }
+
         public async Task<IEnumerable<UserPermission>> GetAll()
         {
             await _unitofwork.permissions.GetData();
@@ -52,49 +53,23 @@ namespace BAL
             var resultcheck = await _unitofwork.CompleteAsync();
             return await Task.Run(() => (resultcheck) ? result : null);
         }
-        public async Task<IEnumerable<UserPermission>> DeleteMultiple(List<int> id)
+        public async Task<IEnumerable<UserPermission>> DeleteMultiple(IEnumerable<int> id)
         {
             var result= await _unitofwork.UserPermissions.DeleteMultipleData(id);
             var resultcheck = await _unitofwork.CompleteAsync();
             return await Task.Run(() => (resultcheck) ? result : null);
         }
-        public async Task<List<int>> GetAllUserPermisssionIdByEid(int id)
+        public async Task<IEnumerable<int>> GetAllUserPermisssionIdByEid(int id)
         {
-
-            List<int> vs = new List<int>();
-            var x = await this.GetAll();
-            await Task.Run(() =>
-             {
-                 foreach (var el in x)
-                 {
-                     if (el.employee_id == id)
-                     {
-                         vs.Add(el.user_permission_id);
-                     }
-                 }
-             });
-            return vs;
+            var x = await _unitofwork.UserPermissions.GetAllByExpression(x => x.employee_id == id);
+            return x.Select(x => x.user_permission_id);
         }
-     
-        public async Task<List<permission>> GetByEid(int id)
-        {
 
-            List<permission> vs = new List<permission>();
-            var x = await this.GetAll();
-            await Task.Run(() =>
-            {
-                foreach (var el in x)
-                {
-                    if (el.employee_id == id)
-                    {
-                        if (el.permissions.is_active == true)
-                        {
-                            vs.Add(el.permissions);
-                        }
-                    }
-                }
-            });
-            return vs;
+        public async Task<IEnumerable<permission>> GetByEid(int id)
+        {
+            await _unitofwork.permissions.GetData();
+            var x = await _unitofwork.UserPermissions.GetAllByExpression(x => x.employee_id == id);
+            return x.Select(x=>x.permissions);
         }
         public async Task<IEnumerable<UserPermission>> DeleteByRoleAndPermissionids(int roleid, IEnumerable<int> pids)
         {

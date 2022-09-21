@@ -38,7 +38,13 @@ namespace BAL
         }
         public async Task<employee> GetById(int id)
         {
-            return await _unitofwork.employees.GetDataById(id);
+            var x = await _unitofwork.employees.GetByExpression(u => u.employee_id == id);
+            return x;
+        }
+        public async Task<employee> GetByEmailId(string id)
+        {
+            var x = await _unitofwork.employees.GetByExpression(u => u.officeemail == id);
+            return x;
         }
         public async Task<employee> Delete(int id)
         {

@@ -21,8 +21,8 @@ namespace BAL
         public async Task<login> getByEid(int id)
         {
             await _unitOfWork.roles.GetData();
-            var data = await _unitOfWork.logins.GetData();
-            return data.Where(result => result.employee_id == id).FirstOrDefault();
+            var data = await _unitOfWork.logins.GetByExpression(x=>x.employee_id == id);
+            return data;
         }
         public async Task<IEnumerable<login>> GetAll()
         {

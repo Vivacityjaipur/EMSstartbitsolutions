@@ -9,6 +9,7 @@ namespace BAL
         Task<employee> Delete(int id);
         Task<IEnumerable<employee>> GetAll();
         Task<employee> GetById(int id);
+        Task<employee> GetByEmailId(string id);
         Task<employee> Insert(employee u);
         Task<employee> Update(employee u);
         Task<IEnumerable<int>> GetEmployeeIdswithRoleids(int roleid);

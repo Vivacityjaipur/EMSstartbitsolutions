@@ -112,8 +112,12 @@ namespace EMSstartbit.Controllers
                 {
                     return BadRequest(new ErrorResponse { Error = "Bad Request", ErrorCode = "400" });
                 }
-                
-                value.role_id = id;
+
+                var result = roledata.GetById(value.role_id);
+                if(result == null)
+                {
+                    return NotFound();
+                }
                     var valnew = await roledata.Edit(value);
                     if (valnew != null)
                     {

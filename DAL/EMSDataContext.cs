@@ -42,5 +42,11 @@ namespace DAL
         public virtual DbSet<shift> shifts { get; set; }
         public virtual DbSet<test> tests { get; set; }
 
+
+
+        //Masters
+        public virtual DbSet<bloodgroup> bloodgroups { get; set; }
+        public virtual DbSet<workmode> workmodes { get; set; }
+
     }
 }

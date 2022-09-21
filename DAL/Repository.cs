@@ -4,36 +4,65 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-
+using System.Linq.Expressions;
 
 namespace DAL
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> :   IRepository<T> where T : class
     {
         protected readonly EMSDataContext _context;
-        protected  DbSet<T> dbset;
+        protected DbSet<T> dbset;
         public Repository(EMSDataContext context)
         {
             _context = context;
             this.dbset = _context.Set<T>();
         }
-        public  async Task<IEnumerable<T>> GetData()
+        public async Task<IEnumerable<T>> GetData()
         {
             try
             {
-                return await dbset.ToListAsync();
+                var i = await dbset.ToListAsync();
+                return i;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return new List<T>();
             }
         }
+        public async Task<IEnumerable<T>> GetAllByExpression(Expression<Func<T, bool>> expression)
+        {
+            try
+            {
+                var c = await dbset.Where(expression).ToListAsync();
+                return c;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<T>();
+            }
+        }
+        public async Task<T> GetByExpression(Expression<Func<T, bool>> expression)
+        {
+            try
+            {
+                var c = await dbset.Where(expression).FirstOrDefaultAsync();
+
+                return c;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
         public async Task<T> GetDataById(int id)
         {
             try
-            { var c = await dbset.FindAsync(id);
-              
+            {
+                var c = await dbset.FindAsync(id);
+
                 return c;
             }
             catch (Exception ex)
@@ -60,10 +89,10 @@ namespace DAL
         {
             try
             {
-                if(value != null)
-                {   await Task.Run(()=> {
+                if (value != null)
+                {
+                    await Task.Yield();
                     dbset.Update(value);
-                });
                     return value;
 
                 }
@@ -85,7 +114,7 @@ namespace DAL
                 var exist = await dbset.FindAsync(id);
                 if (exist != null)
                 {
-                    await Task.Run(() => dbset.Remove(exist));
+                    dbset.Remove(exist);
                     return exist;
                 }
 
@@ -123,9 +152,9 @@ namespace DAL
             try
             {
                 List<T> list = new List<T>();
-                foreach(var i in entities)
+                foreach (var i in entities)
                 {
-                   var result =await this.EditData(i);
+                    var result = await this.EditData(i);
                     if (result != null)
                     {
                         list.Add(result);
